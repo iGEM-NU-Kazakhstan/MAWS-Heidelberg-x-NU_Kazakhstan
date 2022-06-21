@@ -42,8 +42,8 @@ parser.add_argument("-t", "--ntides", type=int,
 parser.add_argument("-p", "--path",
                     help="Path to your PDB file.")
 
-#added by NU iGEM for recurring:
-#parser.add_argument("-r", "--run", help="run counter")
+#added by NU iGEM
+parser.add_argument("-a", "--aptamer_type", help="type of the aptamer sequence: DNA or RNA")
 
 args = parser.parse_args()
 
@@ -73,10 +73,10 @@ if args.path:
 ##Number of rotable junctions in DNA, to distinguish forward and backward rotation
 N_ELEMENTS = 4
 
-#added by NU iGEM
-#RUN_COUNT = 0
-#if args.run:
-#    RUN_COUNT = args.run
+#added by iGEM NU Kazakhstan
+APTAMER_TYPE = 'DNA'
+if args.aptamer_type:
+    APTAMER_TYPE = args.aptamer_type
 
 
 #Open a pdb file, to monitor progress
@@ -96,22 +96,30 @@ output.write("Number of further steps: {0} (sequence length = )\n".format(N_NTID
 output.write("Value of beta: {0}\n".format(BETA))
 output.write("Start time: {0}\n".format(str(datetime.now())))
 
-#Build Structure-object for RNA residues
-RNA = XMLStructure("RNA.xml")
+#added by iGEM NU Kazakhstan
+if APTAMER_TYPE == 'RNA':
+    #Build Structure-object for RNA residues
+    RNA = XMLStructure("RNA.xml")
 
-#Changed forcefield to ff14SB (default when creating amber files)
-#Instantiate the Complex for further computation
-cpx = Complex("leaprc.ff14SB")
+    #Instantiate the Complex for further computation
+    cpx = Complex("leaprc.ff14SB")
 
-#Add an empty Chain to the Complex, of structure RNA -- RNA not used
-cpx.add_chain('', RNA)
+    #Add an empty Chain to the Complex
+    cpx.add_chain('', RNA)
 
-#modified by iGEM NU
-#the same for DNA aptamer:
-#structure
-#DNA = XMLStructure("DNA.xml")
-#chain
-#cpx.add_chain("G C A T", DNA)
+    #set nucleotides to add:
+    nucleotides = ["G", "A", "U", "C"]
+else:
+    #structure for DNA
+    DNA = XMLStructure("DNA.xml")
+
+    #Instantiate the Complex for further computation
+    cpx = Complex("leaprc.ff14SB")
+
+    #chain
+    cpx.add_chain("G C A T", DNA)
+
+    nucleotides = ["DGN", "DAN", "DTN", "DCN"]
 
 
 #Add a chain to the complex using a pdb file (e.g. "xylanase.pdb")
@@ -140,7 +148,7 @@ best_positions = None
 output.write("Initialized succesfully!\n")
 
 #for each nucleotide in GATC
-for ntide in 'GAUC':
+for ntide in nucleotides:
     output.write("{0}: starting initial step for '{1}'\n".format(str(datetime.now()),ntide))
     energies = []
     free_E = None
@@ -219,7 +227,7 @@ for i in range(N_NTIDES):
     best_old_sequence = best_sequence
     best_old_positions = best_positions[:]
     best_entropy = None
-    for ntide in 'GAUC':
+    for ntide in nucleotides:
         #For append nucleotide or prepend nucleotide
         for append in [True, False]:
             energies = []
