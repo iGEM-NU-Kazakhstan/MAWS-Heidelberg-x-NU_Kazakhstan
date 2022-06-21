@@ -256,7 +256,7 @@ for i in range(N_NTIDES):
             #not recommended! causes issues with proteins
             #complex.minimize()
 
-            #if crashes here, try again, if it crashes again, pass. (by NU iGEM)
+            #added by iGEM NU Kazakhstan -- if crashes here, try again, if it crashes again, pass. (by NU iGEM)
             try:
                 complex.pert_min(size=0.5)
             except Exception:
@@ -269,7 +269,6 @@ for i in range(N_NTIDES):
                     print("*************************Crashed, passed********************")
                     
                     pass     
-                #subprocess.call(f"python dnaMaws.py -p {JOB_NAME}.pdb -n {JOB_NAME}", shell=True)
 
             #Remember positions
             positions0 = complex.positions[:]
