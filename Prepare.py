@@ -55,7 +55,7 @@ def makeLib(file_path, protein_name, residue_name, connect0=None, connect1=None,
 	subprocess.call("tleap -f %s.in"%name, shell=True)
 
 	#load PDB info into PDBfile object;
-	PDB = app.PDBFile('PDB_tmp.pdb')
+	PDB = app.PDBFile(file_path)
 	
 	#
 	length = sum([1 for atom in PDB.topology.atoms()])
